@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paymentservice
+  labels:
+    app: paymentservice
+spec:
+  replicas: 3
+  strategy:
+    rollingUpdate:  # Поскольку реплик 3, полное обновление, количество подов составляет от 3 до 6
+      maxSurge: 3    #  количество под, запущенное во время непрерывного обновления
+      maxUnavailable: 0 # Максимальное количество недоступных подов, разрешенное во время последовательного обновления
+  selector:
+    matchLabels:
+      app: paymentservice
+  template:
+    metadata:
+      labels:
+        app: paymentservice
+    spec:
+        containers:
+        - name: server
+          image: uwscsi/ps:v0.0.1
+          env:
+          - name: PORT
+            value: "50051"
+          - name: DISABLE_PROFILER
+            value: "1"
